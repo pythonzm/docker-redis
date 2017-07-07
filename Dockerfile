@@ -1,6 +1,5 @@
 FROM centos:7
 
-RUN groupadd -r redis && useradd -r -g redis redis
 
 ENV REDIS_VERSION 3.2.9
 ENV REDIS_DOWNLOAD_URL http://download.redis.io/releases/redis-3.2.9.tar.gz
@@ -32,15 +31,15 @@ RUN set -ex; \
         \
         make -C /usr/src/redis -j "$(nproc)"; \
         make -C /usr/src/redis install; \
-        \
-        rm -r /usr/src/redis;
+        rm -r /usr/src/redis
 
-RUN mkdir /data && chown redis:redis /data
+
+RUN mkdir /data
 VOLUME /data
 WORKDIR /data
 
-COPY docker-entrypoint.sh /usr/local/bin/
-ENTRYPOINT ["docker-entrypoint.sh"]
+ENTRYPOINT ["redis-server"]
 
-EXPOSE 6300
-CMD ["redis-server"]
+EXPOSE 6379
+
+CMD ["/data/redis.conf"]
